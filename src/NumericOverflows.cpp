@@ -1,8 +1,9 @@
-// NumericOverflows.cpp : This file contains the 'main' function. Program execution begins and ends there.
+﻿// NumericOverflows.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include <iostream>     // std::cout
 #include <limits>       // std::numeric_limits
+#include <exception>
 
 /// <summary>
 /// Template function to abstract away the logic of:
@@ -20,7 +21,20 @@ T add_numbers(T const& start, T const& increment, unsigned long int const& steps
 
   for (unsigned long int i = 0; i < steps; ++i)
   {
-    result += increment;
+      try {
+          // Before performing the math, the function checks to see if there is room for the increment. If the increment
+          // size is larger than the difference of the MAX and current result, the check fails moving to the else statement
+          // and breaks the loop.
+          if (increment <= (std::numeric_limits<T>::max() - result)) {
+              result += increment;
+          }
+          else {
+              throw std::overflow_error("Overflow");
+          }
+      }
+      catch (const std::exception& e) {
+          std::cerr << e.what() << std::endl;
+      }
   }
 
   return result;
@@ -43,7 +57,17 @@ T subtract_numbers(T const& start, T const& decrement, unsigned long int const& 
 
   for (unsigned long int i = 0; i < steps; ++i)
   {
-    result -= decrement;
+      try {
+          if (decrement <= (result - std::numeric_limits<T>::min())) {
+              result -= decrement;
+          }
+          else {
+              throw std::underflow_error("Underflow");
+          }
+      }
+      catch (const std::exception& e) {
+          std::cerr << e.what() << std::endl;
+      }
   }
 
   return result;
@@ -59,16 +83,16 @@ void test_overflow()
 {
   // TODO: The add_numbers template function will overflow in the second method call
   //        You need to change the add_numbers method to:
-  //        1. Detect when an overflow will happen
-  //        2. Prevent it from happening
-  //        3. Return the correct value when no overflow happened or
+  //        ✔️1. Detect when an overflow will happen
+  //        ✔️2. Prevent it from happening
+  //        ✔️3. Return the correct value when no overflow happened or
   //        4. Return something to tell test_overflow the addition failed
   //        NOTE: The add_numbers method must remain a template in the NumericFunctions header.
   //
   //        You need to change the test_overflow method to:
   //        1. Detect when an add_numbers failed
-  //        2. Inform the user the overflow happened
-  //        3. A successful result displays the same result as before you changed the method
+  //        ✔️2. Inform the user the overflow happened
+  //        ✔️3. A successful result displays the same result as before you changed the method
   //        NOTE: You cannot change anything between START / END DO NOT CHANGE
   //              The test_overflow method must remain a template in the NumericOverflows source file
   //
@@ -91,8 +115,16 @@ void test_overflow()
   std::cout << +result << std::endl;
 
   std::cout << "\tAdding Numbers With Overflow (" << +start << ", " << +increment << ", " << (steps + 1) << ") = ";
-  result = add_numbers<T>(start, increment, steps + 1);
-  std::cout << +result << std::endl;
+  try {
+      result = add_numbers<T>(start, increment, steps + 1);
+      std::cout << +result << std::endl;
+  }
+  catch (const std::overflow_error& e) {
+      std::cerr << e.what() << std::endl;
+  }
+  catch (const std::exception& e) {
+      std::cerr << e.what() << std::endl;
+  }
 }
 
 template <typename T>
@@ -100,16 +132,16 @@ void test_underflow()
 {
   // TODO: The subtract_numbers template function will underflow in the second method call
   //        You need to change the subtract_numbers method to:
-  //        1. Detect when an underflow will happen
-  //        2. Prevent it from happening
-  //        3. Return the correct value when no underflow happened or
+  //        ✔️1. Detect when an underflow will happen
+  //        ✔️2. Prevent it from happening
+  //        ✔️3. Return the correct value when no underflow happened or
   //        4. Return something to tell test_underflow the subtraction failed
   //        NOTE: The subtract_numbers method must remain a template in the NumericFunctions header.
   //
   //        You need to change the test_underflow method to:
   //        1. Detect when an subtract_numbers failed
-  //        2. Inform the user the underflow happened
-  //        3. A successful result displays the same result as before you changed the method
+  //        ✔️2. Inform the user the underflow happened
+  //        ✔️3. A successful result displays the same result as before you changed the method
   //        NOTE: You cannot change anything between START / END DO NOT CHANGE
   //              The test_underflow method must remain a template in the NumericOverflows source file
   //
@@ -132,8 +164,16 @@ void test_underflow()
   std::cout << +result << std::endl;
 
   std::cout << "\tSubtracting Numbers With Overflow (" << +start << ", " << +decrement << ", " << (steps + 1) << ") = ";
-  result = subtract_numbers<T>(start, decrement, steps + 1);
-  std::cout << +result << std::endl;
+  try {
+      result = subtract_numbers<T>(start, decrement, steps + 1);
+      std::cout << +result << std::endl;
+  }
+  catch (const std::underflow_error& e) {
+      std::cerr << e.what() << std::endl;
+  }
+  catch (const std::exception& e) {
+      std::cerr << e.what() << std::endl;
+  }
 }
 
 void do_overflow_tests(const std::string& star_line)
