@@ -81,16 +81,16 @@ T subtract_numbers(T const& start, T const& decrement, unsigned long int const& 
 template <typename T>
 void test_overflow()
 {
-  // TODO: The add_numbers template function will overflow in the second method call
+  //        The add_numbers template function will overflow in the second method call
   //        You need to change the add_numbers method to:
   //        ✔️1. Detect when an overflow will happen
   //        ✔️2. Prevent it from happening
   //        ✔️3. Return the correct value when no overflow happened or
-  //        4. Return something to tell test_overflow the addition failed
+  //        ✔️4. Return something to tell test_overflow the addition failed
   //        NOTE: The add_numbers method must remain a template in the NumericFunctions header.
   //
   //        You need to change the test_overflow method to:
-  //        1. Detect when an add_numbers failed
+  //        ✔️1. Detect when an add_numbers failed
   //        ✔️2. Inform the user the overflow happened
   //        ✔️3. A successful result displays the same result as before you changed the method
   //        NOTE: You cannot change anything between START / END DO NOT CHANGE
@@ -130,16 +130,16 @@ void test_overflow()
 template <typename T>
 void test_underflow()
 {
-  // TODO: The subtract_numbers template function will underflow in the second method call
+  //        The subtract_numbers template function will underflow in the second method call
   //        You need to change the subtract_numbers method to:
   //        ✔️1. Detect when an underflow will happen
   //        ✔️2. Prevent it from happening
   //        ✔️3. Return the correct value when no underflow happened or
-  //        4. Return something to tell test_underflow the subtraction failed
+  //        ✔️4. Return something to tell test_underflow the subtraction failed
   //        NOTE: The subtract_numbers method must remain a template in the NumericFunctions header.
   //
   //        You need to change the test_underflow method to:
-  //        1. Detect when an subtract_numbers failed
+  //        ✔️1. Detect when an subtract_numbers failed
   //        ✔️2. Inform the user the underflow happened
   //        ✔️3. A successful result displays the same result as before you changed the method
   //        NOTE: You cannot change anything between START / END DO NOT CHANGE
