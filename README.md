@@ -1,5 +1,7 @@
 # Module One Numeric Overflow Activity Guidelines and Rubric
 
+[![CodeQL](https://github.com/rowland007/Numeric-Overflow-Coding/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/rowland007/Numeric-Overflow-Coding/actions/workflows/codeql-analysis.yml)
+
 ## Overview
 You are a senior software developer on a team of software developers who are responsible for a large banking application. Your manager has learned that the code used for addition and subtraction over a series of steps will sometimes calculate incorrect results. The other developers have spent a lot of time tracing down the issue, and they narrowed it down to two functions: add_numbers() and subtract_numbers(). Following some guidance from an older testing guide, they isolated those functions in a standalone set of test cases. Doing this allows them to reliably show how to trigger an underflow or overflow. However, they don’t know what to do to prevent it from occurring in the future. They came to you for help.
 
