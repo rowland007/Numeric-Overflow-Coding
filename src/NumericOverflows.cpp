@@ -1,4 +1,27 @@
-﻿// NumericOverflows.cpp : This file contains the 'main' function. Program execution begins and ends there.
+﻿/************************************************************************
+ Program:       Numeric Overflow Activity
+ Author:        Randall Rowland (https://github.com/rowland007)
+ Class:         CS-405-T2676 Secure Coding 21EW2
+ Instructor:    Mr. Trevor Hodde
+ Date:          2021-10-25
+ Description:   Assignment presents code that is designed to show the two functions operating with and without overflow or underflows
+ Input:
+ Output:
+ Known bugs:
+ Missing features:
+    The source code has been commented with TODOs to explain the detailed rules you must follow.
+    There are comments that mark code that must be changed.
+    There may be more than one way to solve this problem, so be sure to demonstrate that you can detect an underflow or overflow, prevent it, and communicate it back to the calling function.
+    Remember to leverage capabilities provided by the standard C++ library to help you achieve success. 
+
+ License:           GNU General Public License v3.0
+ Modifications:
+   Date                      Comment
+ ---------   ------------------------------------------------
+ 2021OCT25   Add exception header
+ 2021OCT26   Add under/over flow logic to add_/subtract_numbers
+ ************************************************************************/
+// NumericOverflows.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include <iostream>     // std::cout
@@ -18,25 +41,31 @@ template <typename T>
 T add_numbers(T const& start, T const& increment, unsigned long int const& steps)
 {
   T result = start;
+  T *temp = new T;
 
   for (unsigned long int i = 0; i < steps; ++i)
   {
       try {
-          // Before performing the math, the function checks to see if there is room for the increment. If the increment
-          // size is larger than the difference of the MAX and current result, the check fails moving to the else statement
-          // and breaks the loop.
-          if (increment <= (std::numeric_limits<T>::max() - result)) {
-              result += increment;
+          *temp = result + increment;
+          if (result > 0 && increment > 0 && *temp < 0) // Detects overflow of negative result with the sum of two positive arguments
+          {
+              throw std::overflow_error("Overflow detected, last good value: ");
           }
-          else {
-              throw std::overflow_error("Overflow");
+          if (result < 0 && increment < 0 && *temp > 0) // Detects overflow of positive result with the sume of two negative arguments
+          {
+              throw std::overflow_error("Overflow detected, last good value: ");
           }
+          if (*temp <= result)                          // Detects wrap around of unsigned arguments 
+          {
+              throw std::overflow_error("Overflow detected, last good value: "); 
+          }
+          result += increment;
       }
       catch (const std::exception& e) {
-          std::cerr << e.what() << std::endl;
+          std::cerr << e.what();
+          delete temp;
       }
   }
-
   return result;
 }
 
@@ -53,24 +82,33 @@ T add_numbers(T const& start, T const& increment, unsigned long int const& steps
 template <typename T>
 T subtract_numbers(T const& start, T const& decrement, unsigned long int const& steps)
 {
-  T result = start;
+    T result = start;
+    T* temp = new T;
 
-  for (unsigned long int i = 0; i < steps; ++i)
-  {
-      try {
-          if (decrement <= (result - std::numeric_limits<T>::min())) {
-              result -= decrement;
-          }
-          else {
-              throw std::underflow_error("Underflow");
-          }
-      }
-      catch (const std::exception& e) {
-          std::cerr << e.what() << std::endl;
-      }
-  }
-
-  return result;
+    for (unsigned long int i = 0; i < steps; ++i)
+    {
+        try {
+            *temp = result - decrement;
+            if (result > 0 && decrement > 0 && *temp < 0) // Detects underflow of negative result with two positive arguments
+            {
+                throw std::underflow_error("Underflow detected, last good value: ");
+            }
+            if (result < 0 && decrement < 0 && *temp > 0) // Detects underflow of positive result with two negative arguments
+            {
+                throw std::underflow_error("Underflow detected, last good value: ");
+            }
+            if (*temp >= result)                          // Detects wrap around of unsigned arguments 
+            {
+                throw std::underflow_error("Underflow detected, last good value: ");
+            }
+            result -= decrement;
+        }
+        catch (const std::exception& e) {
+            std::cerr << e.what();
+            delete temp;
+        }
+    }
+    return result;
 }
 
 
@@ -111,19 +149,17 @@ void test_overflow()
   // END DO NOT CHANGE
 
   std::cout << "\tAdding Numbers Without Overflow (" << +start << ", " << +increment << ", " << steps << ") = ";
-  T result = add_numbers<T>(start, increment, steps);
-  std::cout << +result << std::endl;
+  std::cout << +add_numbers<T>(start, increment, steps) << std::endl;
 
   std::cout << "\tAdding Numbers With Overflow (" << +start << ", " << +increment << ", " << (steps + 1) << ") = ";
   try {
-      result = add_numbers<T>(start, increment, steps + 1);
-      std::cout << +result << std::endl;
+      std::cout << +add_numbers<T>(start, increment, steps + 1) << std::endl;
   }
   catch (const std::overflow_error& e) {
       std::cerr << e.what() << std::endl;
   }
   catch (const std::exception& e) {
-      std::cerr << e.what() << std::endl;
+      std::cerr << e.what() << std::endl << std::endl;
   }
 }
 
@@ -164,16 +200,8 @@ void test_underflow()
   std::cout << +result << std::endl;
 
   std::cout << "\tSubtracting Numbers With Overflow (" << +start << ", " << +decrement << ", " << (steps + 1) << ") = ";
-  try {
-      result = subtract_numbers<T>(start, decrement, steps + 1);
-      std::cout << +result << std::endl;
-  }
-  catch (const std::underflow_error& e) {
-      std::cerr << e.what() << std::endl;
-  }
-  catch (const std::exception& e) {
-      std::cerr << e.what() << std::endl;
-  }
+  result = subtract_numbers<T>(start, decrement, steps + 1);
+  std::cout << +result << std::endl << std::endl;
 }
 
 void do_overflow_tests(const std::string& star_line)
